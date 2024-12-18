@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopEasy</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(120deg, #ff9a9e, #fad0c4);
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .search-container {
+      text-align: center;
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 40px 30px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+    .search-container h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ff6363;
+    }
+    .search-container input {
+      border: 2px solid #ff6363;
+      border-radius: 25px;
+      padding: 10px 20px;
+      outline: none;
+      width: 80%;
+      font-size: 1rem;
+    }
+    .search-container input:focus {
+      border-color: #ff9a9e;
+      box-shadow: 0px 0px 10px rgba(255, 99, 99, 0.5);
+    }
+    .search-container button {
+      margin-top: 20px;
+      width: 50%;
+      padding: 10px;
+      border: none;
+      border-radius: 25px;
+      background: #ff6363;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.3s ease-in-out;
+    }
+    .search-container button:hover {
+      background: #ff4d4d;
+      box-shadow: 0px 4px 10px rgba(255, 99, 99, 0.3);
+    }
+    .wishlist-button {
+        margin-top: 20px; 
+        background-color: #ff9a9e; 
+        color: white; 
+        border-radius: 25px; 
+        padding: 10px; 
+        text-decoration: none; 
+        transition: all .3s ease; 
+        display:inline-block; 
+        width:auto; 
+        font-weight:bold; 
+    }
+    .wishlist-button:hover {
+        background-color: #ff6363; 
+        transform: scale(1.05); 
+    }
+    
+</style>
+</head>
+<body>
+  
+<form action="/results" method="POST">
+    <div class="search-container">
+        <h1>ShopEasy</h1>
+        <input type="text" name="productName" placeholder="Search for a product" id="productInput" required />
+        <button type="submit">Search</button>
+        
+        <!-- Wishlist Button -->
+        <a href="/wishlist" class="wishlist-button">❤️</a>
+        
+    </div>
+</form>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
