@@ -59,8 +59,9 @@ ShopEasy/
 ├── Views/
 │   ├── results.ejs       # Display search results
 │   ├── wishlist.ejs      # Display wishlist items
-│   ├── search.ejs        # Search form
+│   ├── searchPage.ejs    # Search form
 ├── app.js                # Main server file
+├── connection.js         # connecting to MongoDB
 ├── package.json          # Dependencies and scripts
 ├── README.md             # Project documentation
 🔧 Setup Instructions
