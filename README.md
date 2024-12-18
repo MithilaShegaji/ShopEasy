@@ -64,86 +64,57 @@ ShopEasy/
 ├── connection.js         # connecting to MongoDB
 ├── package.json          # Dependencies and scripts
 ├── README.md             # Project documentation
+
 🔧 Setup Instructions
-Prerequisites
-Install Node.js and MongoDB.
-Install a package manager like npm or yarn.
-Installation
-Clone the repository:
-bash
-Copy code
-git clone https://github.com/your-username/ShopEasy.git
-Navigate to the project directory:
-bash
-Copy code
-cd ShopEasy
-Install dependencies:
-bash
-Copy code
-npm install
-Start the MongoDB server:
-bash
-Copy code
-mongod
-Run the application:
-bash
-Copy code
-npm start
+      Prerequisites
+          1. Install Node.js and MongoDB.
+          2. Install a package manager like npm or yarn.
+          3. Installation
+          4. Clone the repository: git clone https://github.com/your-username/ShopEasy.git
+          5. Navigate to the project directory: cd ShopEasy
+          6. Install dependencies:
+                    npm install axios body-parser cheerio cookie-parser cors dotenv ejs express mongoose node-cron nodemailer nodemon puppeteer
+          7. Start the MongoDB server: mongod
+          8. Run the application: npm start
+
 🖥️ Usage
-Open your browser and navigate to http://localhost:3000.
-Search for a product using the search bar.
-View results from multiple platforms and compare prices.
-Save your favorite items to the wishlist.
-View and manage your wishlist at /wishlist.
+  Open your browser and navigate to http://localhost:8000.
+  Use the search bar to find products.
+  View results from multiple platforms and compare prices.
+  Save your favorite items to the wishlist.
+  Manage your wishlist at /wishlist.
+
 📋 API Endpoints
 Product Routes
-Search Product:
-POST /results - Search for products by name.
-
-Get Results:
-GET /results - Display paginated search results.
+  Search Product:
+    POST /results - Search for products by name.
+  Get Results:
+    GET /results - Display paginated search results.
 
 Wishlist Routes
-Add to Wishlist:
-POST /wishlist - Add an item to the wishlist.
+  Add to Wishlist:
+    POST /wishlist - Add an item to the wishlist.
+  View Wishlist:
+    GET /wishlist - Display all saved wishlist items.
 
-View Wishlist:
-GET /wishlist - Display all saved wishlist items.
-
-🎨 Screenshots
-Search Page
-
-Results Page
-
-Wishlist Page
 
 🤝 Contributing
-Contributions are welcome! Feel free to submit a pull request or open an issue.
+      Contributions are welcome! Feel free to submit a pull request or open an issue.
 
-Fork the repository.
-Create a new branch:
-bash
-Copy code
-git checkout -b feature-name
-Make your changes and commit:
-bash
-Copy code
-git commit -m "Add some feature"
-Push to the branch:
-bash
-Copy code
-git push origin feature-name
-Submit a pull request.
-📄 License
-This project is licensed under the MIT License. See the LICENSE file for details.
+Steps to Contribute
+  1. Fork the repository.
+  2. Create a new branch: git checkout -b feature-name
+  3. Make your changes and commit: git commit -m "Add some feature"
+  4. Push to the branch: git push origin feature-name
+  5. Submit a pull request.
+
 
 🌟 Acknowledgements
-Node.js
-MongoDB
-Cheerio
-Axios
-🚀 Made with ❤️ by Your Name
-javascript
-Copy code
+  1. Node.js
+  2. MongoDB
+  3. Cheerio
+  4. Axios
 
-Replace placeholders (e.g., `your-username`) with your actual GitHub details.
+
+🚀 Made with ❤️ by Mithila
+
