@@ -1,0 +1,30 @@
+{
+  "name": "shopeasy",
+  "version": "1.0.0",
+  "description": "A price comparison tool for Flipkart, Myntra, and Amazon using web scraping.",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mithila S Shegaji",
+  "license": "ISC",
+  "dependencies": {
+    "apify-client": "^2.11.0",
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "cheerio": "^1.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.16",
+    "puppeteer": "^23.10.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

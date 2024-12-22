@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopEasy - Wishlist</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Poppins", sans-serif;
+      }
+      .header {
+        background-color: #ff6f61;
+        padding: 10px;
+        color: white;
+        font-size: 2em;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .product-container {
+        margin-top: 20px;
+      }
+      .product-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        font-size: smaller;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+      .card-title {
+        font-size: small;
+        height: 60px;
+      }
+      .card-text {
+        font-size: small;
+        color: #333;
+        height: 60px;
+      }
+      .card-img-top {
+        display: block;
+        margin: 5px auto;
+        width: 100%;
+        height: auto;
+        max-width: 300px;
+        max-height: 200px;
+        object-fit: contain;
+        border-radius: 15px 15px 0 0;
+      }
+      .pagination {
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+      }
+      .wishlist-button {
+        background-color: #ff9a9e;
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        padding: 8px;
+        transition: all 0.3s ease;
+      }
+      .wishlist-button:hover {
+        background-color: #ff6363;
+        transform: scale(1.05);
+      }
+      .search-bar {
+        width: 100%;
+        padding: 5px;
+        border-radius: 30px;
+        border: none;
+        font-size: small;
+        margin: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header d-flex justify-content-between align-items-center py-3 px-4 shadow-sm bg-white">
+      <a href="/search" class="text-decoration-none">
+        <h1 class="m-0 text-primary" style="font-size: 1.8rem; font-weight: bold;">ShopEasy</h1>
+      </a>
+      <form action="/wishlist" method="GET" class="d-flex align-items-center w-50">
+        <input
+          type="text"
+          class="form-control rounded-pill"
+          name="query"
+          placeholder="Search your wishlist..."
+          style="padding: 10px; font-size: 1rem; border: 1px solid #ddd;"
+          required
+        />
+      </form>
+      <a href="/results" class="btn btn-outline-danger rounded-pill px-4 py-2">🔍</a>
+    </div>
+
+    <!-- Container for Wishlist -->
+    <div class="container product-container">
+      <h3 class="text-center mb-4">Your Wishlist</h3>
+
+      <!-- Wishlist Cards -->
+      <div class="row">
+        <% wishlistItems.forEach(item => { %>
+        <div class="col-md-4 mb-4">
+          <div class="card product-card shadow-sm">
+            <img
+              class="card-img-top"
+              src="<%= item.image || 'https://via.placeholder.com/300x200' %>"
+              alt="Product Image"
+            />
+            <div class="card-body">
+              <div class="product-details mb-2" style="overflow: hidden; height: 100px;">
+                <h5 class="card-title"><%= item.title %></h5>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="<%= item.link %>" class="btn btn-primary" target="_blank">View Product</a>
+                <button
+                  class="btn btn-light remove-from-wishlist border-0"
+                  style="background: none; color: red; font-size: 1.5rem;"
+                  title="Remove from Wishlist"
+                  data-id="<%= item._id %>"
+                >
+                  ❤️
+                </button>
+              </div>
+            </div>
+            <div class="card-footer text-muted">
+              Source: <%= item.source || 'Unknown' %>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+      // jQuery for handling wishlist removal
+      $(document).ready(function () {
+        $(".remove-from-wishlist").on("click", function () {
+          const itemId = $(this).data("id");
+
+          $.ajax({
+            url: `/wishlist/${itemId}`,
+            type: "DELETE",
+            success: function (response) {
+              alert(response.message);
+              location.reload();
+            },
+            error: function () {
+              alert("Error removing item from wishlist!");
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

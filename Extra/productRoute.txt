@@ -1,0 +1,454 @@
+//////////////////////////this part of is working well with pagination but not with opening product links.
+// const express = require('express');
+// const axios = require('axios');
+// const cheerio = require('cheerio');
+// const Product = require('../Models/productModel');
+// const router = express.Router();
+
+// // Function to format price to INR
+// function formatPriceToINR(price) {
+//     const parsedPrice = parseFloat(price.replace(/[^0-9.-]+/g, '')); // Extract numeric value
+//     if (isNaN(parsedPrice)) return '₹0'; // Return ₹0 if invalid
+//     return '₹' + parsedPrice.toLocaleString('en-IN'); // Format as INR
+// }
+
+// // Scraping function for eBay
+// async function scrapeEbay(productName) {
+//     try {
+//         const response = await axios.get(`https://www.ebay.com/sch/i.html?_nkw=${productName}`, {
+//             headers: { 'User-Agent': 'Mozilla/5.0' },
+//         });
+//         const $ = cheerio.load(response.data);
+//         let products = [];
+
+//         $('.s-item').each((index, element) => {
+//             let title = $(element).find('.s-item__title').text().trim();
+//             let price = $(element).find('.s-item__price').text().trim();
+//             let link = $(element).find('.s-item__link').attr('href');
+//             if (title && price && link) {
+//                 // Ensure link is absolute
+//                 if (!link.startsWith('http')) {
+//                     link = `https://www.ebay.com${link}`;
+//                 }
+//                 products.push({ title, price, link, source: 'eBay' });
+//             }
+//         });
+
+//         return products;
+//     } catch (error) {
+//         console.error('Error scraping eBay:', error.message);
+//         return [];
+//     }
+// }
+
+// // Scraping function for Walmart (similar to eBay)
+// async function scrapeWalmart(productName) {
+//     try {
+//         const response = await axios.get(`https://www.walmart.com/search/?query=${productName}`, {
+//             headers: {
+//                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+//                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+//             },
+//         });
+        
+//         const $ = cheerio.load(response.data);
+//         let products = [];
+
+//         $('.search-result-gridview-item').each((index, element) => {
+//             let title = $(element).find('.product-title').text().trim();
+//             let price = $(element).find('.price-main .visuallyhidden').text().trim();
+//             let link = $(element).find('a').attr('href');
+//             if (title && price && link) {
+//                 // Ensure link is absolute
+//                 if (!link.startsWith('http')) {
+//                     link = `https://www.walmart.com${link}`;
+//                 }
+//                 products.push({
+//                     title,
+//                     price,
+//                     link,
+//                     source: 'Walmart',
+//                 });
+//             }
+//         });
+
+//         return products;
+//     } catch (error) {
+//         console.error('Error scraping Walmart:', error.message);
+//         return [];
+//     }
+// }
+
+// // Save product to DB
+// async function saveProductToDB(product) {
+//     const newProduct = new Product(product);
+//     await newProduct.save();
+// }
+
+// // Route to handle search
+// router.post('/results', async (req, res) => {
+//     const productName = req.body.productName; // Get product name from POST form
+//     if (!productName) {
+//         return res.redirect('/search'); // Redirect to home page if no product is specified
+//     }
+
+//     // Redirect to GET /results route with query string
+//     res.redirect(`/results?productName=${encodeURIComponent(productName)}`);
+// });
+
+// // Route to show search results
+// router.get('/results', async (req, res) => {
+//     const productName = req.query.productName || ''; // Get product name from query
+//     const page = parseInt(req.query.page) || 1; // Pagination
+//     const itemsPerPage = 9; // Number of items per page
+
+//     // Query MongoDB for matching products
+//     let products = await Product.find({
+//         title: new RegExp(productName, 'i'), // Case-insensitive regex search
+//     })
+//     .skip((page - 1) * itemsPerPage)
+//     .limit(itemsPerPage);
+
+//     // Total product count for pagination
+//     const totalProducts = await Product.countDocuments({
+//         title: new RegExp(productName, 'i'),
+//     });
+//     const totalPages = Math.ceil(totalProducts / itemsPerPage);
+
+//     // Format product prices to INR
+//     products = products.map(product => ({
+//         ...product,
+//         price: formatPriceToINR(product.price),
+//     }));
+
+//     // Render the results page
+//     res.render('results', {
+//         products,
+//         productName,
+//         page,
+//         totalPages,
+//     });
+// });
+
+// module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////this part of code works well with link, but not with pagination/////////////
+const express = require('express');
+const axios = require('axios');
+const cheerio = require('cheerio');
+const Product = require('../Models/productModel');
+const router = express.Router();
+
+// Scraping function for eBay
+async function scrapeEbay(productName) {
+    try {
+        const response = await axios.get(`https://www.ebay.com/sch/i.html?_nkw=${productName}`, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+            },
+        });
+
+        const $ = cheerio.load(response.data);
+        let products = [];
+
+        $('.s-item').each((index, element) => {
+            let title = $(element).find('.s-item__title').text().trim();
+            let price = $(element).find('.s-item__price').text().trim();
+            let link = $(element).find('.s-item__link').attr('href');
+            if (title && price && link) {
+                products.push({
+                    title,
+                    price,
+                    link,
+                    source: 'eBay',
+                });
+            }
+        });
+
+        return products;
+    } catch (error) {
+        console.error('Error scraping eBay:', error.message);
+        return [];
+    }
+}
+
+// Scraping function for Walmart
+async function scrapeWalmart(productName) {
+    try {
+        const response = await axios.get(`https://www.walmart.com/search/?query=${productName}`, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+            },
+        });
+
+        const $ = cheerio.load(response.data);
+        let products = [];
+
+        $('.search-result-gridview-item').each((index, element) => {
+            let title = $(element).find('.product-title').text().trim();
+            let price = $(element).find('.price-main .visuallyhidden').text().trim();
+            let link = $(element).find('a').attr('href');
+            if (title && price && link) {
+                products.push({
+                    title,
+                    price,
+                    link: `https://www.walmart.com${link}`,
+                    source: 'Walmart',
+                });
+            }
+        });
+
+        return products;
+    } catch (error) {
+        console.error('Error scraping Walmart:', error.message);
+        return [];
+    }
+}
+
+// Scraping function for Best Buy
+async function scrapeBestBuy(productName) {
+    try {
+        const response = await axios.get(`https://www.bestbuy.com/site/searchpage.jsp?st=${productName}`, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+            },
+        });
+
+        const $ = cheerio.load(response.data);
+        let products = [];
+
+        $('.sku-item').each((index, element) => {
+            let title = $(element).find('.sku-header').text().trim();
+            let price = $(element).find('.priceView-hero-price span').text().trim();
+            let link = $(element).find('.sku-header a').attr('href');
+            if (title && price && link) {
+                products.push({
+                    title,
+                    price,
+                    link: `https://www.bestbuy.com${link}`,
+                    source: 'Best Buy',
+                });
+            }
+        });
+
+        return products;
+    } catch (error) {
+        console.error('Error scraping Best Buy:', error.message);
+        return [];
+    }
+}
+
+// Scraping function for Target
+async function scrapeTarget(productName) {
+    try {
+        const response = await axios.get(`https://www.target.com/s?searchTerm=${productName}`, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+            },
+        });
+
+        const $ = cheerio.load(response.data);
+        let products = [];
+
+        $('.product-card').each((index, element) => {
+            let title = $(element).find('.h-text').text().trim();
+            let price = $(element).find('.h-price span').text().trim();
+            let link = $(element).find('a').attr('href');
+            if (title && price && link) {
+                products.push({
+                    title,
+                    price,
+                    link: `https://www.target.com${link}`,
+                    source: 'Target',
+                });
+            }
+        });
+
+        return products;
+    } catch (error) {
+        console.error('Error scraping Target:', error.message);
+        return [];
+    }
+}
+
+// Scraping function for Zalando
+async function scrapeZalando(productName) {
+    try {
+        const response = await axios.get(`https://www.zalando.com/${productName}/`, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+            },
+        });
+
+        const $ = cheerio.load(response.data);
+        let products = [];
+
+        $('.z-navicat-list-item').each((index, element) => {
+            let title = $(element).find('.z-text').text().trim();
+            let price = $(element).find('.z-price-amount').text().trim();
+            let link = $(element).find('a').attr('href');
+            if (title && price && link) {
+                products.push({
+                    title,
+                    price,
+                    link: `https://www.zalando.com${link}`,
+                    source: 'Zalando',
+                });
+            }
+        });
+
+        return products;
+    } catch (error) {
+        console.error('Error scraping Zalando:', error.message);
+        return [];
+    }
+}
+
+// Save product to DB
+async function saveProductToDB(product) {
+    const newProduct = new Product(product);
+    await newProduct.save();
+}
+
+// { this part of code works well for opening product links but not for paginantion
+// Route to handle product search and results rendering
+// router.post('/results', async (req, res) => {
+//     const productName = req.body.productName;
+//     const page = parseInt(req.query.page) || 1; // Current page (defaults to 1)
+//     const itemsPerPage = 9; // Number of items per page
+
+//     // Fetch products from DB that match the search term, with pagination
+//     let products = await Product.find({
+//         title: new RegExp(productName, 'i'), // Case-insensitive search
+//     })
+//     .skip((page - 1) * itemsPerPage) // Skip the products from previous pages
+//     .limit(itemsPerPage); // Limit to only 'itemsPerPage' products
+
+//     // Calculate total number of products matching the search
+//     const totalProducts = await Product.countDocuments({
+//         title: new RegExp(productName, 'i'),
+//     });
+
+//     // Calculate the total number of pages
+//     const totalPages = Math.ceil(totalProducts / itemsPerPage);
+
+//     // If no products found in DB, scrape data from websites
+//     if (products.length === 0) {
+//         try {
+//             // Scrape data from multiple websites
+//             const [ebayProducts, walmartProducts, bestBuyProducts, targetProducts, zalandoProducts] = await Promise.all([
+//                 scrapeEbay(productName),
+//                 scrapeWalmart(productName),
+//                 scrapeBestBuy(productName),
+//                 scrapeTarget(productName),
+//                 scrapeZalando(productName),
+//             ]);
+
+//             // Combine all scraped products
+//             products = [
+//                 ...ebayProducts,
+//                 ...walmartProducts,
+//                 ...bestBuyProducts,
+//                 ...targetProducts,
+//                 ...zalandoProducts,
+//             ];
+
+//             // Save the scraped products to the DB
+//             await Promise.all(products.map(saveProductToDB));
+
+//             // Recalculate totalProducts after scraping
+//             const totalProducts = products.length;
+//             const totalPages = Math.ceil(totalProducts / itemsPerPage);
+
+//             // Fetch the products for the current page again
+//             products = products.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+//         } catch (error) {
+//             console.error('Error during scraping:', error.message);
+//         }
+//     }
+
+//     // Render the results page with the products and pagination info
+//     res.render('results', {
+//         products,
+//         productName,
+//         page,
+//         totalPages,
+//     });
+// });
+// module.exports = router;
+// }
+
+
+// { this part of code works well for pagination but not for opening product links
+// Route to handle search
+// router.post('/results', async (req, res) => {
+//     const productName = req.body.productName; // Get product name from POST form
+//     if (!productName) {
+//         return res.redirect('/search'); // Redirect to home page if no product is specified
+//     }
+
+//     // Redirect to GET /results route with query string
+//     res.redirect(`/results?productName=${encodeURIComponent(productName)}`);
+// });
+
+// // Route to show search results
+// router.get('/results', async (req, res) => {
+//     const productName = req.query.productName || ''; // Get product name from query
+//     const page = parseInt(req.query.page) || 1; // Pagination
+//     const itemsPerPage = 9; // Number of items per page
+
+//     // Query MongoDB for matching products
+//     let products = await Product.find({
+//         title: new RegExp(productName, 'i'), // Case-insensitive regex search
+//     })
+//     .skip((page - 1) * itemsPerPage)
+//     .limit(itemsPerPage);
+
+//     // Total product count for pagination
+//     const totalProducts = await Product.countDocuments({
+//         title: new RegExp(productName, 'i'),
+//     });
+//     const totalPages = Math.ceil(totalProducts / itemsPerPage);
+
+//     // Format product prices to INR
+//     products = products.map(product => ({
+//         ...product,
+//         price: formatPriceToINR(product.price),
+//     }));
+
+//     // Render the results page
+//     res.render('results', {
+//         products,
+//         productName,
+//         page,
+//         totalPages,
+//     });
+// });
+
+// Function to format price to INR
+// function formatPriceToINR(price) {
+//     const parsedPrice = parseFloat(price.replace(/[^0-9.-]+/g, '')); // Extract numeric value
+//     if (isNaN(parsedPrice)) return '₹0'; // Return ₹0 if invalid
+//     return '₹' + parsedPrice.toLocaleString('en-IN'); // Format as INR
+// }
+
+// }
+
+
+
+
+
+module.exports = router;

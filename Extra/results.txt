@@ -1,0 +1,119 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Search Results</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background-color: #ff6f61;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            font-size: 2em;
+        }
+        .product-card {
+            margin-bottom: 30px;
+        }
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .card-text {
+            font-size: 1em;
+            color: #333;
+        }
+        .card-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #ddd;
+        }
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .product-container {
+            padding: 20px;
+        }
+        .product-card {
+            margin: 10px;
+        }
+        .page-link {
+            color: #ff6f61;
+        }
+        .page-link:hover {
+            background-color: #f4f6f9;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    ShopEasy
+</div>
+
+<!-- Container for Products -->
+<div class="container product-container">
+    <h3 class="text-center mb-4">Search Results for "<%= productName %>"</h3>
+
+    <!-- Product Cards -->
+    <div class="row">
+        <% products.forEach(product => { %>
+            <div class="col-md-4 product-card">
+                <div class="card">
+                    <img class="card-img-top" src="https://via.placeholder.com/300x200" alt="Product Image">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= product.title %></h5>
+                        <p class="card-text">Price: <%= product.price %></p>
+                        <!-- View Product Button -->
+                        <a href="<%= product.link %>" class="btn btn-primary" target="_blank">View Product</a>
+                    </div>
+                    <div class="card-footer text-muted">
+                        Source: <%= product.source || 'Unknown' %>
+                    </div>
+                </div>
+            </div>
+            
+        <% }) %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <ul class="pagination">
+            <!-- Previous Page Link -->
+            <% if (page > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="/results?page=<%= page - 1 %>&productName=<%= productName %>">Previous</a>
+                </li>
+            <% } %>
+
+            <!-- Page Numbers -->
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= i === page ? 'active' : '' %>">
+                    <a class="page-link" href="/results?page=<%= i %>&productName=<%= productName %>"><%= i %></a>
+                </li>
+            <% } %>
+
+            <!-- Next Page Link -->
+            <% if (page < totalPages) { %>
+                <li class="page-item">
+                    <a class="page-link" href="/results?page=<%= page + 1 %>&productName=<%= productName %>">Next</a>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html> -->
