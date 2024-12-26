@@ -5,7 +5,7 @@ const wishlistSchema = new mongoose.Schema({
     price: { type: String, required: true },
     link: { type: String, required: true },
     image: { type: String, required: true },
-    source: { type: String, required: true }, // e.g., Amazon, Flipkart, etc.
+    source: { type: String, required: true }, 
     dateAdded: { type: Date, default: Date.now }
 });
 

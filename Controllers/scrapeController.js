@@ -20,66 +20,60 @@ async function saveProducts(products, source) {
 }
 
 // Scraping function for Flipkart
-// async function scrapeFlipkart(productName) {
-//     try {
-//         const response = await axios.get(`https://www.flipkart.com/search?q=${productName}`, {
-//             headers: { 'User-Agent': 'Mozilla/5.0' },
-//         });
-//         const $ = cheerio.load(response.data);
-//         const products = [];
-//         let count = 0;
-
-//         $('._1AtVbE').each((index, element) => {
-//             if (count >= LIMIT) return false;
-
-//             const title = $(element).find('._4rR01T').text().trim();
-//             const price = $(element).find('._30jeq3').text().trim();
-//             const link = `https://www.flipkart.com${$(element).find('a').attr('href')}`;
-//             const image = $(element).find('img').attr('src');
-
-//             if (title && price && link && image) {
-//                 products.push({ title, price, link, image });
-//                 count++;
-//             }
-//         });
-
-//         return await saveProducts(products, 'Flipkart');
-//     } catch (error) {
-//         console.error('Error scraping Flipkart:', error.message);
-//         return [];
-//     }
-// }
-
-// Scraping function for Amazon
-async function scrapeAmazon(productName) {
+async function scrapeFlipkart(productName) {
     try {
-        const response = await axios.get(`https://www.amazon.in/s?k=${productName}`, {
+        const response = await axios.get(`https://www.flipkart.com/search?q=${productName}`, {
             headers: { 'User-Agent': 'Mozilla/5.0' },
         });
         const $ = cheerio.load(response.data);
         const products = [];
         let count = 0;
 
-        $('.s-main-slot .s-result-item').each((index, element) => {
+        $('._1AtVbE').each((index, element) => {
             if (count >= LIMIT) return false;
 
-            const title = $(element).find('.a-text-normal').text().trim();
-            const price = $(element).find('.a-price .a-offscreen').text().trim();
-            const link = `https://www.amazon.in${$(element).find('.a-link-normal').attr('href')}`;
+            const title = $(element).find('._4rR01T').text().trim();
+            const price = $(element).find('._30jeq3').text().trim();
+            const link = `https://www.flipkart.com${$(element).find('a').attr('href')}`;
             const image = $(element).find('img').attr('src');
 
             if (title && price && link && image) {
-                products.push({ title, price, link, image });
+                products.push({ title, price, link, image, source: 'Flipkart' });
                 count++;
             }
         });
 
-        return await saveProducts(products, 'Amazon');
+        return await saveProducts(products, 'Flipkart');
     } catch (error) {
-        console.error('Error scraping Amazon:', error.message);
+        console.error('Error scraping Flipkart:', error.message);
         return [];
     }
 }
+
+
+// Scraping function for Amazon
+// async function scrapeAmazon(productName) {
+//     try {
+//         const response = await axios.get(`https://www.amazon.in/s?k=${productName}`, {
+//             headers: { 'User-Agent': 'Mozilla/5.0' },
+//         });
+//         const $ = cheerio.load(response.data);
+//         let products = [];
+//         $('.s-main-slot .s-result-item').each((index, element) => {
+//             let title = $(element).find('.a-text-normal').text().trim();
+//             let price = $(element).find('.a-price .a-offscreen').text().trim();
+//             let link = `https://www.amazon.in${$(element).find('.a-link-normal').attr('href')}`;
+//             let image = $(element).find('img').attr('src');
+//             if (title && price && link && image) {
+//                 products.push({ title, price, link, image, source: 'Amazon' });
+//             }
+//         });
+//         return products;
+//     } catch (error) {
+//         console.error('Error scraping Amazon:', error.message);
+//         return [];
+//     }
+// }
 
 // Scraping function for Myntra
 async function scrapeMyntra(productName) {
@@ -211,7 +205,7 @@ async function scrapeMeesho(productName) {
 }
 
 module.exports = {
-    // scrapeFlipkart,
+    scrapeFlipkart,
     // scrapeAmazon,
     scrapeMyntra,
     scrapeAjio,

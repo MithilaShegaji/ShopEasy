@@ -5,6 +5,7 @@ const PORT = 8000;
 
 // Importing Routes
 const productRoute = require("./Routes/productRoute");
+const wishlistRoute = require('./Routes/wishlistRoute');
 // const staticRoute = require("./Routes/staticRoute");
 // const userRoute = require("./Routes/userRoute"); // Uncomment if needed later
 
@@ -35,6 +36,8 @@ app.get('/search', (req, res) => {
 // app.use("/", staticRoute);   // Handles static routes like home, signup, login
 // app.use("/user", userRoute); // User-related routes, uncomment if implemented
 app.use("/", productRoute); // Product-related routes
+
+app.use('/wishlist', wishlistRoute);
 
 // Start Server
 app.listen(PORT, () => {

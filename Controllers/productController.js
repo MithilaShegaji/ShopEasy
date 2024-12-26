@@ -1,7 +1,7 @@
 const Product = require('../Models/productModel');
-const Wishlist = require('../Models/wishlistModel');
+
 const {
-    // scrapeFlipkart,
+    scrapeFlipkart,
     // scrapeAmazon,
     scrapeMyntra,
     scrapeEbay,
@@ -22,15 +22,12 @@ function convertToINR(price) {
     return price;
 }
 
-
-
 // Function to save product to DB
 async function saveProductToDB(product) {
     const cleanedProduct = {
         title: product.title,
         description: product.description,
         price: convertToINR(product.price),
-        originalPrice: product.originalPrice ? convertToINR(product.originalPrice) : null,
         link: product.link,
         image: product.image,
         source: product.source,
@@ -41,30 +38,6 @@ async function saveProductToDB(product) {
         await newProduct.save();
     } catch (error) {
         console.error('Error saving product to DB:', error);
-    }
-}
-
-// Function to handle wishlist display
-async function handleWishlistDisplay(req, res) {
-    const { title, price, link, image, source } = req.body;
-    const newWishlistItem = new Wishlist({ title, price, link, image, source });
-    try {
-        await newWishlistItem.save();
-        return res.status(200).json({ message: 'Item added to wishlist!' });
-    } catch (error) {
-        console.error('Error saving wishlist item:', error.message);
-        return res.status(500).json({ message: 'Error adding item to wishlist.' });
-    }
-}
-
-// Function to show wishlist
-async function handleWishlistRequest(req, res) {
-    try {
-        const wishlistItems = await Wishlist.find();
-        res.render('wishlist', { wishlistItems });
-    } catch (error) {
-        console.error('Error fetching wishlist items:', error.message);
-        res.status(500).json({ message: 'Error fetching wishlist items.' });
     }
 }
 
@@ -82,32 +55,33 @@ async function handleResultsRequest(req, res) {
     const productName = req.query.productName || '';
     const page = parseInt(req.query.page) || 1;
     const itemsPerPage = 9;
+    const maxProducts = 50;  // Limit the number of products scraped
+    const maxPages = 6;      // Limit the scraping to 6 pages
 
     let productsFromDB = await Product.find({
         title: new RegExp(productName, 'i'),
     })
-        .skip((page - 1) * itemsPerPage)
-        .limit(itemsPerPage);
+    .skip((page - 1) * itemsPerPage)
+    .limit(itemsPerPage);
 
     const totalProductsFromDB = await Product.countDocuments({
         title: new RegExp(productName, 'i'),
     });
 
-    const totalPagesFromDB = Math.ceil(totalProductsFromDB / itemsPerPage);
+    const totalPagesFromDB = Math.floor(totalProductsFromDB / itemsPerPage);
 
     if (productsFromDB.length === 0 || totalProductsFromDB < itemsPerPage * page) {
         try {
             // Scrape data from all websites
             const [
-                // flipkartProducts,
+                flipkartProducts,
                 // amazonProducts,
                 myntraProducts,
                 ebayProducts,
                 ajioProducts,
                 meeshoProducts,
-
             ] = await Promise.all([
-                // scrapeFlipkart(productName),
+                scrapeFlipkart(productName),
                 // scrapeAmazon(productName),
                 scrapeMyntra(productName),
                 scrapeEbay(productName),
@@ -115,27 +89,24 @@ async function handleResultsRequest(req, res) {
                 scrapeMeesho(productName),
             ]);
 
-            // Combine all scraped products
-            const allScrapedProducts = [
-                // ...flipkartProducts,
+            // Combine all scraped products and limit to 50
+            let allScrapedProducts = [
+                ...flipkartProducts,
                 // ...amazonProducts,
                 ...myntraProducts,
                 ...ebayProducts,
                 ...ajioProducts,
                 ...meeshoProducts,
-            ].map(product => ({
-                ...product,
-                description: product.description,
-                price: convertToINR(product.price),
-                originalPrice: product.originalPrice ? convertToINR(product.originalPrice) : null,
-            }));
+            ];
+
+            allScrapedProducts = allScrapedProducts.slice(0, maxProducts);  // Limit to 50 products
 
             // Save scraped products to DB
             await Promise.all(allScrapedProducts.map(saveProductToDB));
 
-            // Recalculate total products after scraping
+            // Recalculate total products and total pages
             const totalProductsAfterScraping = allScrapedProducts.length;
-            const totalPagesAfterScraping = Math.ceil(totalProductsAfterScraping / itemsPerPage);
+            const totalPagesAfterScraping = Math.floor(totalProductsAfterScraping / itemsPerPage);
 
             // Slice products for current page
             const productsForCurrentPage = allScrapedProducts.slice((page - 1) * itemsPerPage, page * itemsPerPage);
@@ -145,7 +116,7 @@ async function handleResultsRequest(req, res) {
                 productName,
                 page,
                 totalPages: totalPagesAfterScraping,
-                convertToINR
+                convertToINR,
             });
         } catch (error) {
             console.error('Error during scraping:', error.message);
@@ -157,15 +128,13 @@ async function handleResultsRequest(req, res) {
             productName,
             page,
             totalPages: totalPagesFromDB,
-            convertToINR
+            convertToINR,
         });
     }
 }
 
 // Export the functions
 module.exports = {
-    handleWishlistDisplay,
-    handleWishlistRequest,
     handleResultsDisplay,
     handleResultsRequest,
 };
